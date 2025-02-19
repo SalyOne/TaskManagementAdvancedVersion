@@ -4,9 +4,6 @@
   <div class="button-container">
     <button nz-button [nzSize]="'large'" nzType="primary" routerLink="/tasks/add">Add task</button>
   </div>
-  <div class="button-container">
-    <button nz-button [nzSize]="'large'" nzType="primary" (click)="resetTask()">Reset tasks</button>
-  </div>
 
   <nz-table #filterTable [nzData]="listOfData" nzTableLayout="fixed">
     <thead>
@@ -31,16 +28,6 @@
       <td>
         <nz-select
           nzAllowClear
-          nzPlaceHolder="Select a status"
-          [(ngModel)]="data.status"
-          (ngModelChange)="onStatusChange(data.id, $event)">
-          <nz-option nzLabel="{{item.value}}" nzValue="{{item.value}}"
-                     *ngFor="let item of statusOptions$"></nz-option>
-        </nz-select>
-      </td>
-      <td>
-        <nz-select
-          nzAllowClear
           nzPlaceHolder="Select a priority"
           [(ngModel)]="data.priority"
           (ngModelChange)="onPriorityChange(data.id, $event)">
@@ -49,10 +36,36 @@
         </nz-select>
       </td>
       <td>
+        <nz-select
+          nzAllowClear
+          nzPlaceHolder="Select a status"
+          [disabled]="canChangeStatus(data.id)"
+          [(ngModel)]="data.status"
+          (ngModelChange)="onStatusChange(data.id, $event)">
+          <nz-option nzLabel="{{item.value}}" nzValue="{{item.value}}"
+                     *ngFor="let item of statusOptions$"></nz-option>
+        </nz-select>
+      </td>
+      <nz-select
+        [(ngModel)]="data.dependency"
+        nzMode="multiple"
+        nzPlaceHolder="Select dependencies"
+        (ngModelChange)="updateTask(data)">
+        <nz-option
+          *ngFor="let t of listOfData"
+          [nzValue]="t.id"
+          [nzLabel]="t.title"
+          [nzDisabled]="isItself(data.id, t.id)">
+        </nz-option>
+      </nz-select>
+      <td>
         <button nz-button [nzSize]="'large'" nzType="primary" (click)="deleteTask(data.id)"> Delete</button>
       </td>
     </tr>
     </tbody>
   </nz-table>
+  <div class="button-container">
+    <button nz-button [nzSize]="'large'" nzType="primary" (click)="resetTask()">Reset tasks</button>
+  </div>
 </div>
 

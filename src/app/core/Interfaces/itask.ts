@@ -4,19 +4,11 @@ export interface ITask {
   description: string;
   status: TaskStatus;
   priority: TaskPriority;
-  dependency: string[];
+  dependency: (string|number)[];
 
 }
-export enum TaskStatus {
-  InProgress = 'In progress',
-  Pending = 'Pending',
-  Completed = 'Completed'
-}
-export enum TaskPriority {
-  High = 'High',
-  Medium = 'Medium',
-  Low = 'Low'
-}
+export type TaskPriority = 'High' | 'Medium' | 'Low';
+
 export const TaskPriorityList: ListItem[] = [
   {
     value: 'High',
@@ -28,6 +20,9 @@ export const TaskPriorityList: ListItem[] = [
     value: 'Low',
   },
 ];
+
+export type TaskStatus = 'Pending' | 'In Progress' | 'Completed';
+
 export const TaskStatusList: ListItem[] = [
   {
     value: 'InProgress',

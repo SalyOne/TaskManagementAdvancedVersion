@@ -47,16 +47,17 @@ interface ColumnItem {
 
 export class TaskListComponent implements OnInit {
   tasks: ITask[] = [];
-  listOfData: ITask[] = [];
+  listOfData: ITask[] = this.localService.tasks$();
   priorityOptions$: any = TaskPriorityList;
   statusOptions$: any = TaskStatusList;
+  protected readonly priority$ = TaskPriorityList;
+  protected readonly event = event;
 
   constructor(private localService: LocalService) {
   }
 
   ngOnInit(): void {
     this.loadTasks();
-    // console.log("tasks", this.tasks)
     this.listOfData = this.tasks;
   }
 
@@ -80,6 +81,9 @@ export class TaskListComponent implements OnInit {
       name: 'Priority',
     },
     {
+      name: 'Dependency',
+    },
+    {
       name: 'actions',
     }
   ];
@@ -98,18 +102,12 @@ export class TaskListComponent implements OnInit {
     this.loadTasks()
   }
 
-  protected readonly priority$ = TaskPriorityList;
-
   onStatusChange(taskId: number | string, newStatus: any) {
     const updatedTask = {...this.localService.getTaskById(taskId), status: newStatus};
-
     if (updatedTask) {
       this.localService.updateTask(updatedTask);
     }
-
   }
-
-  protected readonly event = event;
 
   onPriorityChange(taskId: number | string, newStatus: any) {
     const updatedTask = {...this.localService.getTaskById(taskId), priority: newStatus};
@@ -118,6 +116,19 @@ export class TaskListComponent implements OnInit {
       this.localService.updateTask(updatedTask);
     }
 
+  }
+
+  canChangeStatus(id: string | number): boolean {
+   return this.localService.isTaskStatusDisabled(id)
+  }
+
+  //TODO make add-task a modal
+  isItself(dataId: string | number, taskId: string | number) {
+    return !this.localService.canAddDependency(dataId, taskId)
+  }
+
+  getTasks() {
+    return this.localService.tasks$();
   }
 }
 

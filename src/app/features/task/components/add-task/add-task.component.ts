@@ -35,7 +35,7 @@ export class AddTaskComponent implements OnInit {
   form: FormGroup = new FormGroup({
     title: new FormControl(null, Validators.required),
     description: new FormControl(null, Validators.required),
-    status: new FormControl(null, Validators.required),
+    status: new FormControl("Pending", Validators.required),
     priority: new FormControl(null, Validators.required),
     // dependencies: new FormControl(null, Validators.required),
   });
