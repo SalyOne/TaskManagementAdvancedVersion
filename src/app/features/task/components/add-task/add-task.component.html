@@ -1,0 +1,50 @@
+<div class="aaa">
+  <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
+    <!--title-->
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" nzRequired> Title</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <input nz-input formControlName="title" placeholder="async validate try to write JasonWood"/>
+      </nz-form-control>
+    </nz-form-item>
+<!--    desc-->
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" nzRequired>Description</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <nz-textarea-count [nzMaxCharacterCount]="2000">
+          <textarea formControlName="description" nz-input rows="2" placeholder="write any thing"></textarea>
+        </nz-textarea-count>
+      </nz-form-control>
+    </nz-form-item>
+    <!-- priority-->
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" nzRequired>select priority</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <nz-select nzAllowClear nzPlaceHolder="Select a priority"
+                   formControlName="priority">
+          <nz-option nzLabel="{{item.value}}" nzValue="{{item.value}}"
+                     *ngFor="let item of priority$"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <!-- status-->
+    <nz-form-item>
+      <nz-form-label [nzSpan]="7" nzRequired>select status</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <nz-select nzAllowClear nzPlaceHolder="Select a priority"
+                   formControlName="status">
+          <nz-option nzLabel="{{item.value}}" nzValue="{{item.value}}"
+                     *ngFor="let item of status$"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzOffset]="7" [nzSpan]="12">
+        <button nz-button nzType="primary">Submit</button>
+        <!--    <button nz-button nzType="primary" [disabled]="!validateForm.valid">Submit</button>-->
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>
+
