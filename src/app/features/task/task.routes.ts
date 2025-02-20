@@ -4,13 +4,14 @@ import {AddTaskComponent} from "./components/add-task/add-task.component";
 
 export const TaskRoutes: Routes = [{
   path: '',
-  redirectTo: 'tasks',
+  redirectTo: '',
   pathMatch: 'full'
 }, {
-  path: 'tasks',
+  path: '',
   component: TaskListComponent
-}, {
-  path: 'add',
-  component: AddTaskComponent
-}
+},
+//   {
+//   path: 'add',
+//   component: AddTaskComponent
+// }
 ];
