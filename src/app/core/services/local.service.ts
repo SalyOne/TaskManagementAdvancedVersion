@@ -63,7 +63,7 @@ export class LocalService {
         task.id === updatedTask.id ? {...task, ...updatedTask} : task
       );
       this.saveTasks(tasks);
-    }catch(error) {
+    } catch (error) {
       throw new Error('Error updating task. Please try again later');
     }
   }
@@ -73,9 +73,9 @@ export class LocalService {
   }
 
   deleteTask(id: string | number): void {
-    let tasks:any = this.getTasks().filter((task) => task.id !== id);
+    let tasks: any = this.getTasks().filter((task) => task.id !== id);
 
-    tasks = tasks.map((task: ITask ) => ({
+    tasks = tasks.map((task: ITask) => ({
       ...task,
       dependency: task.dependency?.filter((depId: string | number) => depId !== id) || []
     }));
@@ -86,44 +86,23 @@ export class LocalService {
   clearTasks(): void {
     localStorage.removeItem(this.STORAGE_KEY);
   }
-  setDependency(taskId: string | number, dependencyId: string | number): void {
-    const tasks = this.getTasks();
-    const task = tasks.find(task => task.id === taskId);
-    const dependencyTask = tasks.find(task => task.id === dependencyId);
 
-    if (!task || !dependencyTask) {
-      console.error('Task task not found.');
-      return;
-    }
-
-    if (this.hasCircularDependency(taskId, dependencyId)) {
-      console.warn('Circular dependency detected. Operation aborted.');
-      return;
-    }
-
-    if (!task.dependency?.includes(dependencyId)) {
-      task.dependency = [...(task.dependency || []), dependencyId];
-      this.saveTasks(tasks);
-    }
-  }
-
-  hasCircularDependency(taskId: string | number, dependencyId: string | number, visited: Set<string | number> = new Set()): boolean {
+  hasCircularDependency(taskId: string | number, dependencyId: string | number, visited = new Set<string | number>()): boolean {
     if (taskId === dependencyId) return true;
+    if (visited.has(taskId)) return false;
+
     visited.add(taskId);
-
     const task = this.getTaskById(taskId);
-    if (!task || !task.dependency) return false;
+    if (!task?.dependency?.length) return false;
 
-    return task.dependency.some(depId => {
-      if (visited.has(depId)) return true;
-      return this.hasCircularDependency(depId, dependencyId, new Set(visited));
-    });
+    return task.dependency.some(depId => this.hasCircularDependency(depId, dependencyId, visited));
   }
-
 
   isTaskStatusDisabled(taskId: string | number): boolean {
     const task = this.getTaskById(taskId);
-    if (!task?.dependency?.length) return false;
+    if (!task?.dependency?.length) {
+      return false;
+    }
 
     return task.dependency.some(depId => {
       const depTask = this.getTaskById(depId);
@@ -131,11 +110,10 @@ export class LocalService {
     });
   }
 
-  canAddDependency(taskId:number | string, dependencyId: number | string): boolean {
+  canAddDependency(taskId: number | string, dependencyId: number | string): boolean {
     if (taskId === dependencyId) {
-      return false; // A task cannot depend on itself
+      return false;
     }
-
     return !this.hasCircularDependency(taskId, dependencyId, new Set());
   }
 

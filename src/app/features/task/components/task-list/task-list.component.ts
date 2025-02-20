@@ -74,11 +74,11 @@ export class TaskListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTasks();
-    this.filteredData = this.listOfData;
   }
 
   loadTasks(): void {
     this.listOfData = this.localService.getTasks();
+    this.filteredData = this.listOfData;
   }
 
 
@@ -103,6 +103,12 @@ export class TaskListComponent implements OnInit {
     }
   }
 
+  isItself(dataId: string | number, taskId: string | number) {
+    return !this.localService.canAddDependency(dataId, taskId)
+  }
+
+
+// filter stuff
   onPriorityChange(taskId: number | string, newStatus: any) {
     const updatedTask = {...this.localService.getTaskById(taskId), priority: newStatus};
 
@@ -113,16 +119,7 @@ export class TaskListComponent implements OnInit {
   }
 
   canChangeStatus(id: string | number): boolean {
-   return this.localService.isTaskStatusDisabled(id)
-  }
-
-  //TODO make add-task a modal
-  isItself(dataId: string | number, taskId: string | number) {
-    return !this.localService.canAddDependency(dataId, taskId)
-  }
-
-  getTasks() {
-    return this.localService.tasks$();
+    return this.localService.isTaskStatusDisabled(id)
   }
 
   filterTasks(): void {
@@ -141,6 +138,10 @@ export class TaskListComponent implements OnInit {
     this.selectedPriority = value;
     this.filterTasks();
   }
+
+
+  //TODO make add-task a modal
+
 
 }
 

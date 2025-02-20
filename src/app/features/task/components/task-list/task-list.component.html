@@ -66,7 +66,7 @@
             *ngFor="let t of listOfData"
             [nzValue]="t.id"
             [nzLabel]="t.title"
-            [nzDisabled]="isItself(data.id, t.id)">
+            [nzDisabled]="isItself(t.id,data.id)">
           </nz-option>
         </nz-select>
       </td>
