@@ -4,19 +4,27 @@
   <div class="button-container">
     <button nz-button [nzSize]="'large'" nzType="primary" routerLink="/tasks/add">Add task</button>
   </div>
-
-  <nz-table #filterTable [nzData]="listOfData" nzTableLayout="fixed">
+  <div class="table-filters">
+    <nz-select
+      nzAllowClear
+      nzPlaceHolder="Select a status"
+      [(ngModel)]="selectedStatus"
+      (ngModelChange)="onStatusFilterChange($event)">
+      <nz-option nzLabel="{{item.value}}" nzValue="{{item.value}}"
+                 *ngFor="let item of statusOptions$"></nz-option>
+    </nz-select>
+    <nz-select
+      nzAllowClear
+      nzPlaceHolder="Select a priority"
+      [(ngModel)]="selectedPriority"
+      (ngModelChange)="onPriorityFilterChange($event)">
+      <nz-option nzLabel="{{item.value}}" nzValue="{{item.value}}" *ngFor="let item of priorityOptions$"></nz-option>
+    </nz-select>
+  </div>
+  <nz-table #filterTable [nzData]="filteredData" nzTableLayout="fixed">
     <thead>
     <tr>
-      <!--        [nzSortOrder]="column.sortOrder"-->
-      <!--        [nzSortFn]="column.sortFn"-->
-      <!--        [nzSortDirections]="column.sortDirections"-->
-      <!--        [nzFilterMultiple]="column.filterMultiple"-->
-      <!--        [nzFilters]="column.listOfFilter"-->
-      <!--        [nzFilterFn]="column.filterFn"-->
-      <th
-        *ngFor="let column of listOfColumns"
-      >
+      <th *ngFor="let column of listOfColumns">
         {{ column.name }}
       </th>
     </tr>
@@ -46,18 +54,22 @@
                      *ngFor="let item of statusOptions$"></nz-option>
         </nz-select>
       </td>
-      <nz-select
-        [(ngModel)]="data.dependency"
-        nzMode="multiple"
-        nzPlaceHolder="Select dependencies"
-        (ngModelChange)="updateTask(data)">
-        <nz-option
-          *ngFor="let t of listOfData"
-          [nzValue]="t.id"
-          [nzLabel]="t.title"
-          [nzDisabled]="isItself(data.id, t.id)">
-        </nz-option>
-      </nz-select>
+      <td >
+        <nz-select
+          style="width: 100px;"
+          *ngIf="listOfData?.length"
+          [(ngModel)]="data.dependency"
+          nzMode="multiple"
+          nzPlaceHolder="Select dependencies"
+          (ngModelChange)="updateTask(data)">
+          <nz-option
+            *ngFor="let t of listOfData"
+            [nzValue]="t.id"
+            [nzLabel]="t.title"
+            [nzDisabled]="isItself(data.id, t.id)">
+          </nz-option>
+        </nz-select>
+      </td>
       <td>
         <button nz-button [nzSize]="'large'" nzType="primary" (click)="deleteTask(data.id)"> Delete</button>
       </td>
@@ -65,7 +77,7 @@
     </tbody>
   </nz-table>
   <div class="button-container">
-    <button nz-button [nzSize]="'large'" nzType="primary" (click)="resetTask()">Reset tasks</button>
+    <button nz-button nzDanger [nzSize]="'large'" nzType="primary" (click)="resetTask()">Reset tasks</button>
   </div>
 </div>
 

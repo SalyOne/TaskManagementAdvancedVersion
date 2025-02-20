@@ -2,6 +2,17 @@
   width: 80%;
   margin: 0 auto;
 }
-.button-container{
+.button-container, .table-filters{
   margin: 10px 0;
+}
+.table-filters{
+  margin: 10px 0;
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  gap: 10px;
+}
+::ng-deep .ant-select-dropdown {
+  visibility: visible !important;
+  opacity: 1 !important;
 }

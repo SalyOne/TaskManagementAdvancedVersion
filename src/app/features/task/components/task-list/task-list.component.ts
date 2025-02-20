@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {
   NzTableComponent,
   NzTableFilterFn,
@@ -6,24 +6,18 @@ import {
   NzTableSortFn,
   NzTableSortOrder, NzThAddOnComponent
 } from "ng-zorro-antd/table";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {HeaderComponent} from "../../../../shared/components/header/header.component";
 import {NzButtonComponent} from "ng-zorro-antd/button";
 import {RouterLink} from "@angular/router";
 import {LocalService} from "../../../../core/services/local.service";
 import {ITask, TaskPriorityList, TaskStatus, TaskStatusList} from "../../../../core/Interfaces/itask";
-import {NzOptionComponent, NzSelectComponent} from "ng-zorro-antd/select";
+import {NzOptionComponent, NzSelectComponent, NzSelectModule} from "ng-zorro-antd/select";
 import {FormsModule} from "@angular/forms";
 
 
 interface ColumnItem {
   name: string;
-  // sortOrder: NzTableSortOrder | null;
-  // sortFn: NzTableSortFn<DataItem> | null;
-  // listOfFilter: NzTableFilterList;
-  // filterFn: NzTableFilterFn<DataItem> | null;
-  // filterMultiple: boolean;
-  // sortDirections: NzTableSortOrder[];
 }
 
 @Component({
@@ -32,7 +26,7 @@ interface ColumnItem {
   imports: [
     NzTableModule,
     NzTableComponent,
-    NzThAddOnComponent,
+    NzSelectModule,
     NgForOf,
     HeaderComponent,
     NzButtonComponent,
@@ -40,32 +34,22 @@ interface ColumnItem {
     NzSelectComponent,
     NzOptionComponent,
     FormsModule,
+    NgIf,
   ],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
 
 export class TaskListComponent implements OnInit {
-  tasks: ITask[] = [];
+  private localService = inject(LocalService);
   listOfData: ITask[] = this.localService.tasks$();
+  filteredData: ITask[] = [];
+
   priorityOptions$: any = TaskPriorityList;
   statusOptions$: any = TaskStatusList;
-  protected readonly priority$ = TaskPriorityList;
-  protected readonly event = event;
 
-  constructor(private localService: LocalService) {
-  }
-
-  ngOnInit(): void {
-    this.loadTasks();
-    this.listOfData = this.tasks;
-  }
-
-  loadTasks(): void {
-    this.tasks = this.localService.getTasks();
-    this.listOfData = this.tasks;
-    // console.log("List of data", this.listOfData);
-  }
+  selectedStatus: string | null = null;
+  selectedPriority: string | null = null;
 
   listOfColumns: ColumnItem[] = [
     {
@@ -87,6 +71,16 @@ export class TaskListComponent implements OnInit {
       name: 'actions',
     }
   ];
+
+  ngOnInit(): void {
+    this.loadTasks();
+    this.filteredData = this.listOfData;
+  }
+
+  loadTasks(): void {
+    this.listOfData = this.localService.getTasks();
+  }
+
 
   deleteTask(id: string | number) {
     this.localService.deleteTask(id)
@@ -130,5 +124,23 @@ export class TaskListComponent implements OnInit {
   getTasks() {
     return this.localService.tasks$();
   }
+
+  filterTasks(): void {
+    this.filteredData = this.listOfData.filter(task => {
+      return (!this.selectedStatus || task.status === this.selectedStatus) &&
+        (!this.selectedPriority || task.priority === this.selectedPriority);
+    });
+  }
+
+  onStatusFilterChange(value: string | null): void {
+    this.selectedStatus = value;
+    this.filterTasks();
+  }
+
+  onPriorityFilterChange(value: string | null): void {
+    this.selectedPriority = value;
+    this.filterTasks();
+  }
+
 }
 
