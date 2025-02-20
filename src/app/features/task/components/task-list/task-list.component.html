@@ -2,7 +2,8 @@
 
   <app-header></app-header>
   <div class="button-container">
-    <button nz-button [nzSize]="'large'" nzType="primary" routerLink="/tasks/add">Add task</button>
+<!--    <button nz-button [nzSize]="'large'" nzType="primary" routerLink="/tasks/add">Add task</button>-->
+    <button nz-button [nzSize]="'large'" nzType="primary" (click)="openModal()">Add task</button>
   </div>
   <div class="table-filters">
     <nz-select
@@ -77,7 +78,7 @@
     </tbody>
   </nz-table>
   <div class="button-container">
-    <button nz-button nzDanger [nzSize]="'large'" nzType="primary" (click)="resetTask()">Reset tasks</button>
+    <button nz-button nzDanger [nzSize]="'large'" nzType="primary" (click)="showConfirm()">Reset tasks</button>
   </div>
 </div>
 

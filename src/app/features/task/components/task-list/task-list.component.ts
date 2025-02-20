@@ -6,7 +6,7 @@ import {
   NzTableSortFn,
   NzTableSortOrder, NzThAddOnComponent
 } from "ng-zorro-antd/table";
-import {NgForOf, NgIf} from "@angular/common";
+import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {HeaderComponent} from "../../../../shared/components/header/header.component";
 import {NzButtonComponent} from "ng-zorro-antd/button";
 import {RouterLink} from "@angular/router";
@@ -14,6 +14,8 @@ import {LocalService} from "../../../../core/services/local.service";
 import {ITask, TaskPriorityList, TaskStatus, TaskStatusList} from "../../../../core/Interfaces/itask";
 import {NzOptionComponent, NzSelectComponent, NzSelectModule} from "ng-zorro-antd/select";
 import {FormsModule} from "@angular/forms";
+import {NzModalModule, NzModalService} from "ng-zorro-antd/modal";
+import {AddTaskComponent} from "../add-task/add-task.component";
 
 
 interface ColumnItem {
@@ -35,6 +37,8 @@ interface ColumnItem {
     NzOptionComponent,
     FormsModule,
     NgIf,
+    NzModalModule,
+    NgClass
   ],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
@@ -42,6 +46,9 @@ interface ColumnItem {
 
 export class TaskListComponent implements OnInit {
   private localService = inject(LocalService);
+  private modalService = inject(NzModalService);
+
+
   listOfData: ITask[] = this.localService.tasks$();
   filteredData: ITask[] = [];
 
@@ -89,6 +96,7 @@ export class TaskListComponent implements OnInit {
 
   resetTask() {
     this.localService.clearTasks()
+    this.loadTasks()
   }
 
   updateTask(task: ITask) {
@@ -139,9 +147,26 @@ export class TaskListComponent implements OnInit {
     this.filterTasks();
   }
 
+  openModal(): void {
+    const modalRef =  this.modalService.create({
+      nzTitle: 'Add a Task',
+      nzContent: AddTaskComponent,
+      nzFooter: null,
+    });
+    modalRef.afterClose.subscribe(result => {
+        this.loadTasks();
+    });
+  }
 
-  //TODO make add-task a modal
-
+  showConfirm(): void {
+    this.modalService.confirm({
+      nzTitle: 'Confirm',
+      nzContent: 'This will erase all tasks! Are you sure you want that? ',
+      nzOkText: 'OK',
+      nzCancelText: 'Cancel',
+      nzOnOk: () => this.resetTask()
+    });
+  }
 
 }
 

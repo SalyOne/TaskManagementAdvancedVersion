@@ -2,3 +2,10 @@
   width: 50%;
   margin: 0 auto;
 }
+.error-line{
+ display: none;
+  &.error{
+    display: block;
+    color: red;
+  }
+}
